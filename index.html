@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ParkOS - Smart Parking Computing Platform</title>
+  
+  <!-- FontAwesome for modern dashboard icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- ParkOS Teal & Navy Modern Dashboard Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- ====================================================================
+         1. SIDEBAR NAVIGATION
+         ==================================================================== -->
+    <aside class="sidebar">
+      <div>
+        <!-- Brand Header -->
+        <div class="brand-section">
+          <div class="brand-logo-pin">P</div>
+          <div class="brand-text">
+            <h1>ParkOS</h1>
+            <span>Smart Parking Platform</span>
+          </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <ul class="nav-menu">
+          <li class="nav-item active" data-view="dashboard">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </li>
+          <li class="nav-item" data-view="map">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Parking Map</span>
+          </li>
+          <li class="nav-item" data-view="bookings">
+            <i class="fas fa-calendar-check"></i>
+            <span>Bookings</span>
+          </li>
+          <li class="nav-item" data-view="vehicles">
+            <i class="fas fa-car-side"></i>
+            <span>Vehicles</span>
+          </li>
+          <li class="nav-item" data-view="analytics">
+            <i class="fas fa-chart-line"></i>
+            <span>Analytics</span>
+          </li>
+
+          <!-- Academic CAPP Modules -->
+          <div class="nav-category">CAPP Academic Core</div>
+          <li class="nav-item" data-view="capp-demo">
+            <i class="fas fa-microchip"></i>
+            <span>Live CAPP Demo</span>
+            <span class="capp-badge">SIM</span>
+          </li>
+          <li class="nav-item" data-view="capp-concepts">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Project Theory & Viva</span>
+          </li>
+          <li class="nav-item" data-view="settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Slogan Bottom Banner -->
+      <div class="sidebar-footer">
+        <div class="sidebar-promo-card">
+          <i class="fas fa-charging-station promo-car-icon"></i>
+          <div class="promo-title">ParkOS v2.4</div>
+          <p class="promo-desc">Smarter Parking.<br>A Better Tomorrow.</p>
+          <div id="backendStatusBadge" style="margin-top:8px; font-size:10px; color:#14b8a6; font-weight:600;">
+            <span style="color:#10b981;">●</span> Client Emulation Mode
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         2. MAIN WORKSPACE AREA
+         ==================================================================== -->
+    <main class="main-wrapper">
+      
+      <!-- Top Navigation Bar -->
+      <header class="top-navbar">
+        <!-- Global Search Bar -->
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="globalSearchInput" class="search-input" placeholder="Search parking slots (e.g. A01), vehicles, or owner...">
+        </div>
+
+        <!-- Top Right Actions & Live Info -->
+        <div class="top-right-actions">
+          <div class="live-time-chip">
+            <i class="far fa-clock"></i>
+            <span id="liveClockText">Tue, 28 Oct 2026, 10:24 AM</span>
+          </div>
+
+          <div class="weather-chip">
+            <i class="fas fa-sun"></i>
+            <span>26°C Clear</span>
+          </div>
+
+          <button class="icon-btn" title="System Notifications" onclick="window.parkosApp.showToast('All CAPP hardware registers normal. Memory bus active.', 'info')">
+            <i class="far fa-bell"></i>
+            <span class="notification-dot"></span>
+          </button>
+
+          <div class="user-profile-btn" onclick="window.parkosApp.switchView('capp-concepts')">
+            <div class="user-avatar">A</div>
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">System Administrator</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Content View Container -->
+      <div class="content-body">
+
+        <!-- ================================================================
+             VIEW 1: DASHBOARD
+             ================================================================ -->
+        <section id="view-dashboard" class="page-view active">
+          <!-- Welcome Greeting Banner -->
+          <div class="welcome-header">
+            <div>
+              <h2>Good Morning, Admin!</h2>
+              <p>Here's what's happening with your parking system today.</p>
+            </div>
+            <div class="header-action-group">
+              <button class="btn btn-secondary" data-action="capp-demo">
+                <i class="fas fa-terminal"></i> Live Demo Mode
+              </button>
+              <button class="btn btn-primary" data-action="book-slot">
+                <i class="fas fa-plus-circle"></i> Quick Book Slot
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 KPI Summary Cards -->
+          <div class="kpi-grid">
+            <!-- Card 1: Total Parking Slots -->
+            <div class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-title">Total Parking Slots</span>
+                <div class="kpi-icon icon-teal"><i class="fas fa-th-large"></i></div>
+              </div>
+              <div class="kpi-value" id="kpiTotalSlots">24</div>
+              <div class="kpi-badge" style="color: #0f766e;">
+                <span>100% capacity</span>
+              </div>
+              <div class="kpi-progress-bar">
+                <div class="kpi-progress-fill" style="width: 100%; background: #0f766e;"></div>
+              </div>
+            </div>
+
+            <!-- Card 2: Available Slots -->
+            <div class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-title">Available Slots</span>
+                <div class="kpi-icon icon-green"><i class="fas fa-check-circle"></i></div>
+              </div>
+              <div class="kpi-value" id="kpiAvailableSlots">18</div>
+              <div class="kpi-badge" style="color: #059669;">
+                <span id="kpiFreePercent">75% free</span>
+              </div>
+              <div class="kpi-progress-bar">
+                <div class="kpi-progress-fill" style="width: 75%; background: #10b981;"></div>
+              </div>
+            </div>
+
+            <!-- Card 3: Occupied Slots -->
+            <div class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-title">Occupied Slots</span>
+                <div class="kpi-icon icon-amber"><i class="fas fa-car"></i></div>
+              </div>
+              <div class="kpi-value" id="kpiOccupiedSlots">5</div>
+              <div class="kpi-badge" style="color: #d97706;">
+                <span id="kpiOccupancyPercent">21% occupied</span>
+              </div>
+              <div class="kpi-progress-bar">
+                <div class="kpi-progress-fill" id="kpiOccupancyBar" style="width: 21%; background: #f59e0b;"></div>
+              </div>
+            </div>
+
+            <!-- Card 4: Today's Bookings -->
+            <div class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-title">Today's Bookings</span>
+                <div class="kpi-icon icon-purple"><i class="fas fa-clock"></i></div>
+              </div>
+              <div class="kpi-value" id="kpiTodayBookings">6</div>
+              <div class="kpi-badge" style="color: #7c3aed;">
+                <i class="fas fa-arrow-up"></i> <span>12% from yesterday</span>
+              </div>
+              <div class="kpi-progress-bar">
+                <div class="kpi-progress-fill" style="width: 60%; background: #8b5cf6;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Middle Dashboard Split (Map Preview, Recent Bookings, Quick Actions) -->
+          <div class="dash-middle-grid">
+            
+            <!-- Live Parking Map Widget -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">
+                  <i class="fas fa-map-marked-alt" style="color: #0f766e;"></i>
+                  <span>Live Parking Map</span>
+                </div>
+                <span class="card-action-link" data-action="view-map">
+                  View Full Map <i class="fas fa-arrow-right"></i>
+                </span>
+              </div>
+              <div class="card-body">
+                <div class="map-preview-container">
+                  <div class="lot-visualizer-canvas">
+                    <div class="mini-bay-row" id="dashMiniSlots">
+                      <!-- Dynamically rendered mini slots -->
+                    </div>
+                    <div class="drive-lane">ENTRANCE • MAIN DRIVE LANE • EXIT</div>
+                  </div>
+                  <div class="map-legend">
+                    <div class="legend-item"><span class="legend-dot dot-available"></span> Available</div>
+                    <div class="legend-item"><span class="legend-dot dot-occupied"></span> Occupied</div>
+                    <div class="legend-item"><span class="legend-dot dot-reserved"></span> Reserved</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Bookings Table -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">
+                  <i class="fas fa-history" style="color: #0f766e;"></i>
+                  <span>Recent Bookings</span>
+                </div>
+                <span class="card-action-link" data-action="view-bookings">
+                  View All <i class="fas fa-arrow-right"></i>
+                </span>
+              </div>
+              <div class="card-body" style="padding: 6px 16px;">
+                <table class="simple-table">
+                  <thead>
+                    <tr>
+                      <th>Vehicle No.</th>
+                      <th>Slot</th>
+                      <th>Time</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashRecentBookings">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Quick Actions Panel -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">
+                  <i class="fas fa-bolt" style="color: #d97706;"></i>
+                  <span>Quick Actions</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="quick-action-list">
+                  <button class="action-card-btn featured" data-action="book-slot">
+                    <div class="action-left">
+                      <i class="fas fa-calendar-plus"></i>
+                      <span>Book a Parking Slot</span>
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                  </button>
+
+                  <button class="action-card-btn" data-action="view-map">
+                    <div class="action-left">
+                      <i class="fas fa-map"></i>
+                      <span>View Parking Map</span>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+
+                  <button class="action-card-btn" data-action="capp-demo">
+                    <div class="action-left">
+                      <i class="fas fa-microchip" style="color: #d97706;"></i>
+                      <span>CAPP Live Simulation</span>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+
+                  <button class="action-card-btn" data-action="manage-vehicles">
+                    <div class="action-left">
+                      <i class="fas fa-car"></i>
+                      <span>Manage Vehicles</span>
+                    </div>
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Promotional Footer Banner -->
+          <div class="slogan-banner">
+            <div class="banner-content">
+              <h4>Automated • Secure • Efficient</h4>
+              <p>Real-time parking management with smart allocation, mutual exclusion locking, and cache acceleration.</p>
+            </div>
+            <button class="btn btn-gold" data-action="capp-concepts">
+              Learn CAPP Concepts <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 2: INTERACTIVE PARKING MAP
+             ================================================================ -->
+        <section id="view-map" class="page-view">
+          <div class="welcome-header">
+            <div>
+              <h2>Interactive Parking Map</h2>
+              <p>Explore zones, select individual slots, and view real-time memory address mapping.</p>
+            </div>
+            <div class="header-action-group">
+              <button class="btn btn-secondary" onclick="window.parkosApp.openBookingModal()">
+                <i class="fas fa-plus"></i> Book Slot
+              </button>
+            </div>
+          </div>
+
+          <div class="map-view-layout">
+            <!-- Left Side: Interactive Parking Grid -->
+            <div class="map-main-panel">
+              <div class="zone-selector-bar">
+                <div class="tab-pills">
+                  <div class="tab-pill active" data-zone="all">All Zones (24)</div>
+                  <div class="tab-pill" data-zone="A">Zone A - Ground Floor</div>
+                  <div class="tab-pill" data-zone="B">Zone B - Floor 1</div>
+                  <div class="tab-pill" data-zone="C">Zone C - Floor 2 (EV)</div>
+                </div>
+                <div class="map-legend">
+                  <div class="legend-item"><span class="legend-dot dot-available"></span> Available</div>
+                  <div class="legend-item"><span class="legend-dot dot-occupied"></span> Occupied</div>
+                  <div class="legend-item"><span class="legend-dot dot-reserved"></span> Reserved</div>
+                </div>
+              </div>
+
+              <!-- 24 Interactive Slots Grid -->
+              <div class="parking-grid-full" id="fullParkingGrid">
+                <!-- Dynamically generated slot cards -->
+              </div>
+            </div>
+
+            <!-- Right Side: Slot Inspector Panel -->
+            <div class="slot-inspector">
+              <div class="inspector-header">
+                <div class="inspector-slot-tag">
+                  <span id="inspectorId">A01</span>
+                  <span id="inspectorStatus" class="status-pill parked">OCCUPIED</span>
+                </div>
+                <div style="font-size:12px; color:#64748b; margin-top:4px;" id="inspectorFloor">Floor 0 (Zone A)</div>
+              </div>
+
+              <div style="flex:1;">
+                <div class="detail-row">
+                  <span class="detail-label">Vehicle Type:</span>
+                  <span class="detail-value" id="inspectorType">Four-Wheeler</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Memory Address:</span>
+                  <span class="detail-value" id="inspectorAddress" style="font-family:var(--font-mono); color:#0f766e;">0x1000</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Assigned Vehicle:</span>
+                  <span class="detail-value" id="inspectorVehicle" style="font-family:var(--font-mono);">HR26AB1234</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Booking Time:</span>
+                  <span class="detail-value" id="inspectorTime">09:15 AM</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Access Distance:</span>
+                  <span class="detail-value">15m from Gate 1</span>
+                </div>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:8px; margin-top:20px;">
+                <button class="btn btn-primary" id="btnInspectorBook" style="width:100%;">
+                  <i class="fas fa-ticket-alt"></i> Book This Slot
+                </button>
+                <button class="btn btn-secondary" id="btnInspectorRelease" style="width:100%;">
+                  <i class="fas fa-sign-out-alt"></i> Release Slot
+                </button>
+                <button class="btn btn-secondary" id="btnInspectorCache" style="width:100%; border-color:#d97706; color:#b45309;">
+                  <i class="fas fa-bolt"></i> Test L1 Cache Lookup
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 3: BOOKINGS
+             ================================================================ -->
+        <section id="view-bookings" class="page-view">
+          <div class="welcome-header">
+            <div>
+              <h2>Booking Records & History</h2>
+              <p>Manage active parking permits, view audit trails, and process vehicle checkouts.</p>
+            </div>
+            <button class="btn btn-primary" onclick="window.parkosApp.openBookingModal()">
+              <i class="fas fa-plus"></i> New Booking
+            </button>
+          </div>
+
+          <div class="table-card">
+            <div class="table-filter-bar">
+              <div class="filter-inputs">
+                <input type="text" id="bookingFilterSearch" class="text-input" placeholder="Filter by vehicle or slot..." style="width:240px;">
+                <select id="bookingFilterStatus" class="select-input">
+                  <option value="all">All Statuses</option>
+                  <option value="parked">Active / Parked</option>
+                  <option value="completed">Completed / Exited</option>
+                </select>
+              </div>
+              <div style="font-size:12px; color:#64748b;">
+                * Releasing a slot automatically dispatches waiting vehicles from the FCFS queue.
+              </div>
+            </div>
+
+            <table class="simple-table" style="margin-top:0;">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Vehicle No.</th>
+                  <th>Slot ID</th>
+                  <th>Vehicle Type</th>
+                  <th>Owner Name</th>
+                  <th>Entry Time</th>
+                  <th>Status</th>
+                  <th>Fee</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="bookingsTableBody">
+                <!-- Injected via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 4: VEHICLES
+             ================================================================ -->
+        <section id="view-vehicles" class="page-view">
+          <div class="welcome-header">
+            <div>
+              <h2>Registered Campus Vehicles</h2>
+              <p>Directory of faculty, student, and visitor vehicles with active parking slots.</p>
+            </div>
+            <button class="btn btn-primary" onclick="document.getElementById('modalAddVehicle').classList.add('active')">
+              <i class="fas fa-plus"></i> Register Vehicle
+            </button>
+          </div>
+
+          <div class="table-card">
+            <table class="simple-table">
+              <thead>
+                <tr>
+                  <th>License Plate</th>
+                  <th>Model / Brand</th>
+                  <th>Vehicle Category</th>
+                  <th>Owner Name</th>
+                  <th>Contact Phone</th>
+                  <th>Current Parking State</th>
+                </tr>
+              </thead>
+              <tbody id="vehiclesTableBody">
+                <!-- Injected via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 5: ANALYTICS
+             ================================================================ -->
+        <section id="view-analytics" class="page-view">
+          <div class="welcome-header">
+            <div>
+              <h2>System Analytics & Performance</h2>
+              <p>Occupancy ratios, parking turnover, and revenue computation.</p>
+            </div>
+            <button class="btn btn-secondary" onclick="window.parkosApp.openResetModal()">
+              <i class="fas fa-redo"></i> Reset Demo Data
+            </button>
+          </div>
+
+          <!-- Top Analytics Cards -->
+          <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="kpi-card">
+              <span class="kpi-title">Total Processed Bookings</span>
+              <div class="kpi-value" id="analyticsTotalBookings">6</div>
+              <span style="font-size:12px; color:#059669;"><i class="fas fa-arrow-up"></i> +17% this week</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-title">Average Occupancy Rate</span>
+              <div class="kpi-value" id="analyticsAvgOccupancy">21%</div>
+              <span style="font-size:12px; color:#3b82f6;">Optimal flow across campus</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-title">Generated Parking Revenue</span>
+              <div class="kpi-value" id="analyticsRevenue">₹350</div>
+              <span style="font-size:12px; color:#059669;"><i class="fas fa-arrow-up"></i> Scalable micro-fees</span>
+            </div>
+          </div>
+
+          <!-- Charts Grid -->
+          <div class="dash-middle-grid" style="grid-template-columns: 1.5fr 1fr;">
+            <!-- Line Trend Chart -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Hourly Occupancy Trend (Peak Load)</div>
+              </div>
+              <div class="card-body" style="display:flex; flex-direction:column; align-items:center;">
+                <canvas id="lineTrendCanvas" width="560" height="240" style="width:100%; max-height:240px;"></canvas>
+                <div style="font-size:11px; color:#64748b; margin-top:8px;">24-Hour continuous monitoring • Peak congestion between 10:00 AM - 1:00 PM</div>
+              </div>
+            </div>
+
+            <!-- Donut Usage Chart -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Slot Distribution</div>
+              </div>
+              <div class="card-body" style="display:flex; flex-direction:column; align-items:center;">
+                <canvas id="donutChartCanvas" width="220" height="200" style="max-height:200px;"></canvas>
+                <div class="map-legend" style="margin-top:14px;">
+                  <div class="legend-item"><span class="legend-dot dot-occupied"></span> Occupied</div>
+                  <div class="legend-item"><span class="legend-dot dot-available"></span> Available</div>
+                  <div class="legend-item"><span class="legend-dot dot-reserved"></span> Reserved</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 6: LIVE CAPP DEMONSTRATION MODE (SECTION 5 REQUIREMENT)
+             ================================================================ -->
+        <section id="view-capp-demo" class="page-view">
+          <div class="welcome-header">
+            <div>
+              <h2>Live CAPP Concepts Demonstration</h2>
+              <p>Interactive hardware & scheduling simulator demonstrating Memory, FCFS Queues, Atomic Locks, and Cache acceleration.</p>
+            </div>
+            <button class="btn btn-secondary" id="btnDemoReset">
+              <i class="fas fa-undo"></i> Reset Demo State
+            </button>
+          </div>
+
+          <div class="capp-demo-container">
+            <!-- 6 Dedicated Action Buttons (Prompt Requirement 5) -->
+            <div class="demo-control-toolbar">
+              <div class="demo-title-bar">
+                <h4 style="font-size:14px; font-weight:700; color:#0f172a;">Select a CAPP Demonstration Scenario:</h4>
+                <span style="font-size:12px; color:#64748b;">Step-by-step logs stream into the terminal below</span>
+              </div>
+
+              <div class="demo-button-grid">
+                <!-- 1. Book a Slot -->
+                <div class="demo-btn-card" id="btnDemoBook">
+                  <div class="demo-btn-title">
+                    <i class="fas fa-sign-in-alt" style="color:#0f766e;"></i> 1. Book a Slot
+                  </div>
+                  <div class="demo-btn-desc">Selects vehicle and allocates first available memory slot using O(1) pointer scan.</div>
+                </div>
+
+                <!-- 2. FCFS Queue -->
+                <div class="demo-btn-card" id="btnDemoQueue">
+                  <div class="demo-btn-title">
+                    <i class="fas fa-layer-group" style="color:#7c3aed;"></i> 2. FCFS Queue
+                  </div>
+                  <div class="demo-btn-desc">Enqueues 3 vehicles into waiting buffer and processes them in strict FIFO order.</div>
+                </div>
+
+                <!-- 3. Concurrent Request Simulation -->
+                <div class="demo-btn-card" id="btnDemoRace">
+                  <div class="demo-btn-title">
+                    <i class="fas fa-random" style="color:#ef4444;"></i> 3. Concurrent Simulation
+                  </div>
+                  <div class="demo-btn-desc">Simulates race condition between 2 threads on Slot A05, then applies Mutex lock.</div>
+                </div>
+
+                <!-- 4. Cache Hit/Miss -->
+                <div class="demo-btn-card" id="btnDemoCache">
+                  <div class="demo-btn-title">
+                    <i class="fas fa-bolt" style="color:#d97706;"></i> 4. Cache Hit / Miss
+                  </div>
+                  <div class="demo-btn-desc">Simulates Direct-Mapped L1 Cache: initial miss (45ns) vs repeated hit (1.2ns).</div>
+                </div>
+
+                <!-- 5. Release Slot -->
+                <div class="demo-btn-card" id="btnDemoRelease">
+                  <div class="demo-btn-title">
+                    <i class="fas fa-sign-out-alt" style="color:#10b981;"></i> 5. Release Slot
+                  </div>
+                  <div class="demo-btn-desc">Frees occupied slot in memory, invalidates cache line, and auto-dispatches queue.</div>
+                </div>
+
+                <!-- 6. Reset Demo -->
+                <div class="demo-btn-card" onclick="window.parkosApp.openResetModal()">
+                  <div class="demo-btn-title">
+                    <i class="fas fa-sync" style="color:#64748b;"></i> 6. Reset Demo
+                  </div>
+                  <div class="demo-btn-desc">Restores initial sample data, flushes cache lines, and resets mutex registers.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Terminal Output Window (Real-time logs with timestamps) -->
+            <div class="terminal-card">
+              <div class="terminal-header">
+                <div class="terminal-dots">
+                  <div class="dot dot-red"></div>
+                  <div class="dot dot-yellow"></div>
+                  <div class="dot dot-green"></div>
+                </div>
+                <div class="terminal-title">ParkOS Hardware & Architecture Log Bus [tty0]</div>
+                <button class="btn btn-secondary btn-sm" onclick="document.getElementById('demoTerminalScreen').innerHTML = ''" style="padding:2px 8px; font-size:10px; background:#1e293b; color:#cbd5e1; border:none;">Clear</button>
+              </div>
+              <div class="terminal-screen" id="demoTerminalScreen">
+                <div class="log-entry">
+                  <span class="log-time">[10:24:00.000]</span>
+                  <span class="log-tag-memory">[SYSTEM]</span>
+                  <span class="log-msg">ParkOS CAPP Execution Core Initialized. Base Memory: 0x1000. L1 Cache: 8 lines enabled.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visualizers Split Grid: FCFS Queue + Cache Table -->
+            <div class="capp-visualizers-grid">
+              
+              <!-- Concept 2 Visualizer: FCFS Queue -->
+              <div class="viz-panel">
+                <h4>
+                  <span><i class="fas fa-stream" style="color:#7c3aed;"></i> Concept 2: FCFS Waiting Queue</span>
+                  <span style="font-size:11px; font-weight:normal; color:#64748b;">FIFO Order Buffer</span>
+                </h4>
+                <div class="queue-strip" id="demoQueueStrip">
+                  <span style="color:#94a3b8; font-size:12px; margin:auto;">FCFS Waiting Queue is currently empty.</span>
+                </div>
+                <div style="font-size:11px; color:#64748b; margin-top:10px;">
+                  Head pointer dequeues first. Prevents vehicle starvation during peak campus congestion.
+                </div>
+              </div>
+
+              <!-- Concept 4 Visualizer: Direct-Mapped Cache -->
+              <div class="viz-panel">
+                <h4>
+                  <span><i class="fas fa-microchip" style="color:#d97706;"></i> Concept 4: Direct-Mapped Cache</span>
+                  <span style="font-size:11px; font-weight:normal; color:#64748b;">Formula: Index = ID % 8</span>
+                </h4>
+                <table class="cache-table">
+                  <thead>
+                    <tr>
+                      <th>Line</th>
+                      <th>Valid</th>
+                      <th>Tag</th>
+                      <th>Slot Data</th>
+                    </tr>
+                  </thead>
+                  <tbody id="demoCacheTableBody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+                <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:11px; background:#f8fafc; padding:8px 12px; border-radius:6px;">
+                  <span>Accesses: <strong id="cacheStatTotal">0</strong></span>
+                  <span>Hits: <strong id="cacheStatHits" style="color:#10b981;">0</strong></span>
+                  <span>Misses: <strong id="cacheStatMisses" style="color:#ef4444;">0</strong></span>
+                  <span>Hit Ratio: <strong id="cacheStatRatio" style="color:#0f766e;">0%</strong></span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 7: CAPP CONCEPTS & PROJECT EXPLANATION (SECTION 6 REQUIREMENT)
+             ================================================================ -->
+        <section id="view-capp-concepts" class="page-view">
+          <div class="welcome-header">
+            <div>
+              <h2>CAPP Project Explanation & Viva Guide</h2>
+              <p>Theoretical breakdown of Computer Architecture and Parallel Processing principles implemented in ParkOS.</p>
+            </div>
+            <button class="btn btn-primary" onclick="window.print()">
+              <i class="fas fa-print"></i> Export / Print Guide
+            </button>
+          </div>
+
+          <!-- Problem Statement & Objectives -->
+          <div class="explanation-card">
+            <h3><i class="fas fa-bullseye" style="color:#0f766e;"></i> Problem Statement & Objectives</h3>
+            <p style="color:#334155; line-height:1.7;">
+              Urban parking management faces severe inefficiencies including double allocation during simultaneous bookings, search latency across large slot databases, and starvation of vehicles arriving during peak congestion. 
+              <strong>ParkOS</strong> addresses these challenges by modeling the parking infrastructure as a computing system, mapping physical parking slots to memory words, concurrent bookings to parallel threads, and search queries to cache hierarchies.
+            </p>
+          </div>
+
+          <!-- System Architecture & Flow Diagram -->
+          <div class="explanation-card">
+            <h3><i class="fas fa-sitemap" style="color:#0f766e;"></i> System Architecture & Data Flow</h3>
+            <div class="architecture-diagram-container">
+              <div class="flow-diagram">
+                <div class="flow-step-box">
+                  <div class="flow-step-title">1. User Client</div>
+                  <div class="flow-step-sub">Web UI / Mobile Form</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step-box highlight">
+                  <div class="flow-step-title">2. Allocation Engine</div>
+                  <div class="flow-step-sub">FCFS / Zone Matcher</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step-box">
+                  <div class="flow-step-title">3. Critical Section</div>
+                  <div class="flow-step-sub">Mutex Lock / CAS</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step-box highlight">
+                  <div class="flow-step-title">4. Memory / SQLite</div>
+                  <div class="flow-step-sub">Base 0x1000 + Offsets</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step-box">
+                  <div class="flow-step-title">5. L1 Cache / UI</div>
+                  <div class="flow-step-sub">Direct Mapped Lines</div>
+                </div>
+              </div>
+            </div>
+            <div style="font-size:12px; color:#64748b; text-align:center;">
+              Architecture Pipeline: User Request → Frontend Dashboard → Allocation Logic → FCFS Queue → Mutex Lock → Storage/Memory → L1 Cache → Dashboard Update
+            </div>
+          </div>
+
+          <!-- The 4 Core CAPP Concepts Grid -->
+          <div class="concept-grid-4">
+            
+            <!-- Concept 1 -->
+            <div class="concept-box">
+              <h4><i class="fas fa-memory"></i> Concept 1: Memory & Data Organization</h4>
+              <p>
+                In computer systems, data is organized contiguously in RAM to enable fast pointer arithmetic. ParkOS simulates each parking slot as a 32-byte C struct:
+              </p>
+              <div class="code-snippet">
+struct ParkSlot {
+  char id[4];         // Offset 0x00: Slot Identifier
+  uint8_t zone;       // Offset 0x04: Campus Zone
+  uint8_t floor;      // Offset 0x05: Level
+  uint8_t status;     // Offset 0x06: 0=Avail, 1=Occ, 2=Res
+  char vehicleNo[12]; // Offset 0x07: License Plate
+  uint64_t timestamp; // Offset 0x13: Booking Epoch
+  uint8_t pad[5];     // Total Size = 32 Bytes (0x20)
+};
+// Memory Address = Base_Address + (Index * 32)
+// Slot A01 = 0x1000 + (0 * 0x20) = 0x1000
+// Slot A02 = 0x1000 + (1 * 0x20) = 0x1020
+              </div>
+            </div>
+
+            <!-- Concept 2 -->
+            <div class="concept-box">
+              <h4><i class="fas fa-layer-group"></i> Concept 2: FCFS Queue Scheduling</h4>
+              <p>
+                First-Come First-Served (FCFS) is a fundamental non-preemptive CPU scheduling algorithm. In ParkOS, when all slots of a particular zone are occupied, incoming booking requests are not dropped. Instead, they are enqueued into a FIFO buffer:
+              </p>
+              <div class="code-snippet">
+// Enqueue Operation (Tail pointer)
+Queue.push({ vehicleNo: "KA01MN2468", time: t });
+
+// Dequeue Operation on Slot Release (Head pointer)
+function onSlotReleased(slotId) {
+  if (!Queue.isEmpty()) {
+    let nextVehicle = Queue.shift(); // O(1) FIFO dispatch
+    allocateSlot(slotId, nextVehicle);
+  }
+}
+              </div>
+              <p style="margin-top:6px; font-size:12px;">Prevents starvation and guarantees fair allocation order.</p>
+            </div>
+
+            <!-- Concept 3 -->
+            <div class="concept-box">
+              <h4><i class="fas fa-shield-alt"></i> Concept 3: Atomic Allocation & Critical Section</h4>
+              <p>
+                When two client threads simultaneously attempt to book the same slot (e.g., A05), a <strong>Race Condition</strong> occurs without synchronization. Thread A reads 'available', undergoes a context switch; Thread B reads 'available' and writes its ID; Thread A resumes and overwrites, causing double allocation!
+              </p>
+              <div class="code-snippet">
+// Safe Critical Section with Mutex
+pthread_mutex_lock(&slot_mutex);
+// --- CRITICAL SECTION START ---
+if (slot->status == AVAILABLE) {
+    slot->status = OCCUPIED;
+    slot->vehicleNo = currentVehicle;
+} else {
+    redirect_to_next_slot();
+}
+// --- CRITICAL SECTION END ---
+pthread_mutex_unlock(&slot_mutex);
+              </div>
+            </div>
+
+            <!-- Concept 4 -->
+            <div class="concept-box">
+              <h4><i class="fas fa-tachometer-alt"></i> Concept 4: Direct-Mapped Cache Simulation</h4>
+              <p>
+                Accessing main memory or disk database incurs a high latency (~45ns / 5ms). ParkOS maintains an 8-line simulated Direct-Mapped Cache for hot slot records. 
+              </p>
+              <div class="code-snippet">
+// Hash Function: Line_Index = Slot_ID % Total_Lines
+int cacheIndex = hash(slotId) % 8;
+
+// Cache Access Logic:
+if (cache[cacheIndex].valid == 1 && cache[cacheIndex].tag == slotId) {
+    return CACHE_HIT (Latency: 1.2 ns);
+} else {
+    fetch_from_database(slotId);
+    cache[cacheIndex].tag = slotId;
+    cache[cacheIndex].valid = 1;
+    return CACHE_MISS (Latency: 45.0 ns);
+}
+              </div>
+              <p style="margin-top:6px; font-size:12px;">Demonstrates Temporal Locality (repeated lookups) and Cache Invalidation on slot write.</p>
+            </div>
+
+          </div>
+
+          <!-- Viva Voce Q&A Cheat Sheet -->
+          <div class="explanation-card" style="margin-top:24px;">
+            <h3><i class="fas fa-question-circle" style="color:#d97706;"></i> Viva Voce Interview Preparation</h3>
+            <div style="display:flex; flex-direction:column; gap:14px; margin-top:14px;">
+              <div>
+                <strong style="color:#0f172a;">Q1: Why is an atomic mutex necessary in smart parking?</strong>
+                <p style="color:#475569; font-size:13px;">A: Without mutual exclusion, two drivers using the mobile app at the exact same millisecond could be allocated the identical slot, causing a physical collision in the parking lot. The critical section ensures only one transaction inspects and flips the slot status.</p>
+              </div>
+              <div>
+                <strong style="color:#0f172a;">Q2: What is the difference between Cache Hit and Cache Miss in your simulation?</strong>
+                <p style="color:#475569; font-size:13px;">A: A Cache Hit occurs when the slot's tag matches an entry with valid=1 in the cache line, returning slot data in 1.2ns without querying the database. A Cache Miss occurs when the line is empty or holds a different slot tag, forcing a 45ns memory read and line eviction.</p>
+              </div>
+              <div>
+                <strong style="color:#0f172a;">Q3: How does the FCFS Queue prevent starvation?</strong>
+                <p style="color:#475569; font-size:13px;">A: FCFS treats vehicle requests strictly in order of arrival timestamps. No vehicle can jump ahead regardless of vehicle type or priority, guaranteeing a bounded waiting time.</p>
+              </div>
+              <div>
+                <strong style="color:#0f172a;">Q4: What are the limitations and future enhancements?</strong>
+                <p style="color:#475569; font-size:13px;">A: Limitations: The cache simulator currently models direct-mapped lookup rather than 2-way or 4-way set associative cache with LRU eviction. Future work includes IoT ultrasonic sensor integration, dynamic shortest-path routing (Dijkstra) from entrance to slot, and multi-core thread pools.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 8: SETTINGS
+             ================================================================ -->
+        <section id="view-settings" class="page-view">
+          <div class="welcome-header">
+            <div>
+              <h2>Platform & Hardware Settings</h2>
+              <p>Configure memory addressing, cache line count, and demo parameters.</p>
+            </div>
+          </div>
+
+          <div class="explanation-card" style="max-width:700px;">
+            <div class="form-group">
+              <label class="form-label">Simulation Base Memory Address</label>
+              <input type="text" class="form-control" value="0x1000" readonly style="background:#f8fafc; font-family:var(--font-mono);">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Struct Size Alignment</label>
+              <input type="text" class="form-control" value="32 Bytes (Aligned to 32-byte cache line)" readonly style="background:#f8fafc;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cache Hierarchy</label>
+              <input type="text" class="form-control" value="Direct-Mapped L1 (8 Lines, Write-Invalidate)" readonly style="background:#f8fafc;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Scheduling Algorithm</label>
+              <input type="text" class="form-control" value="First-Come, First-Served (FCFS) Non-Preemptive" readonly style="background:#f8fafc;">
+            </div>
+            <div style="margin-top:24px; padding-top:16px; border-top:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:#ef4444; font-size:14px;">Reset System Data</strong>
+                <p style="font-size:12px; color:#64748b;">Flushes all local storage and restores standard college demo state.</p>
+              </div>
+              <button class="btn btn-danger" onclick="window.parkosApp.openResetModal()">
+                <i class="fas fa-trash-alt"></i> Reset All Data
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ====================================================================
+       3. MODALS (BOOKING, VEHICLE, RESET CONFIRMATION)
+       ==================================================================== -->
+
+  <!-- Modal: Book a Parking Slot -->
+  <div class="modal-overlay" id="modalBooking">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3><i class="fas fa-parking" style="color:#0f766e;"></i> Book Your Parking Slot</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <form id="formBooking">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Vehicle License Number *</label>
+            <input type="text" id="bookVehicleNumber" class="form-control" placeholder="e.g. DL8CAF5678 or HR26AB1234" required style="font-family:var(--font-mono); text-transform:uppercase;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Driver / Owner Name</label>
+            <input type="text" id="bookOwnerName" class="form-control" placeholder="e.g. Aarav Sharma">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vehicle Category</label>
+            <select id="bookVehicleType" class="form-control">
+              <option value="Four-Wheeler">Four-Wheeler (Car / Sedan)</option>
+              <option value="Two-Wheeler">Two-Wheeler (Bike / Scooter)</option>
+              <option value="EV-Charging">Electric Vehicle (EV Charging)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Parking Slot</label>
+            <select id="bookSlotSelect" class="form-control">
+              <option value="auto">Auto-Allocate (FCFS Queue)</option>
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+          <div style="font-size:11.5px; color:#64748b; background:#f0fdfa; padding:10px; border-radius:6px; border:1px solid #ccfbf1;">
+            <i class="fas fa-shield-alt" style="color:#0f766e;"></i> <strong>Atomic Safety:</strong> All allocations are serialized via Mutex Lock to prevent double-booking race conditions.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm Booking</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add / Register Vehicle -->
+  <div class="modal-overlay" id="modalAddVehicle">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3><i class="fas fa-car" style="color:#0f766e;"></i> Register Campus Vehicle</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <form id="formVehicle">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">License Plate *</label>
+            <input type="text" id="vehPlate" class="form-control" placeholder="e.g. MH12KL7890" required style="text-transform:uppercase; font-family:var(--font-mono);">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Make & Model *</label>
+            <input type="text" id="vehModel" class="form-control" placeholder="e.g. Tata Nexon EV" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vehicle Type</label>
+            <select id="vehType" class="form-control">
+              <option value="Four-Wheeler">Four-Wheeler</option>
+              <option value="Two-Wheeler">Two-Wheeler</option>
+              <option value="EV-Charging">EV Charging</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Owner Name *</label>
+            <input type="text" id="vehOwner" class="form-control" placeholder="e.g. Ananya Deshmukh" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="text" id="vehPhone" class="form-control" placeholder="+91 98765 43210">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Vehicle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Reset Confirmation -->
+  <div class="modal-overlay" id="modalResetConfirm">
+    <div class="modal-container" style="width:420px;">
+      <div class="modal-header">
+        <h3 style="color:#ef4444;"><i class="fas fa-exclamation-triangle"></i> Reset Demo Data?</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13.5px; color:#334155;">
+          This will restore the 24 parking slots, active bookings, vehicle registry, and CAPP cache lines back to their default demo state.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmReset">Yes, Reset Demo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/capp-engine.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
